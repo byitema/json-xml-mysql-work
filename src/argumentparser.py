@@ -1,5 +1,6 @@
 import argparse
 import os
+from serializer import JSONSerializer, XMLSerializer
 
 
 class BaseArgumentParser:
@@ -11,10 +12,15 @@ class BaseArgumentParser:
         pass
 
     def parse_arguments(self):
-        self
+        pass
 
 
 class ArgumentParser(BaseArgumentParser):
+    output_format_serializer = {
+        'json': JSONSerializer,
+        'xml': XMLSerializer
+    }
+
     def add_arguments(self):
         self.parser.add_argument('--students',
                                  help='path to the students file directory',
@@ -28,7 +34,10 @@ class ArgumentParser(BaseArgumentParser):
 
     def parse_arguments(self):
         args = self.parser.parse_args()
-        return {'students_file': args.students, 'rooms_file': args.rooms, 'output_format': args.format.lower()}
+        return {'students_file': args.students,
+                'rooms_file': args.rooms,
+                'output_format': args.format.lower(),
+                'output_format_serializer': self.output_format_serializer[args.format.lower()]}
 
     @staticmethod
     def check_path(path: str):

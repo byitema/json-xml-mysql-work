@@ -1,13 +1,10 @@
-import json
-
-
 class FileHandler:
     @staticmethod
-    def read_json(filename):
+    def read(filename):
         with open(filename, 'r') as f:
-            dictionary = json.loads(f.read())
+            data = f.read()
 
-        return dictionary
+        return data
 
     @staticmethod
     def write(data, filename):
