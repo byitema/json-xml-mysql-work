@@ -23,6 +23,15 @@ if __name__ == '__main__':
     connector.insert_rooms(rooms_data)
     connector.insert_students(students_data)
 
+    # adding index on birthday
+    # - we have queries that use this column
+    # - no need to create index on enum column with only 2 elements ('Sex': 'M', 'F')
+    # - we do not use other column in select queries
+    index_creation = '''create index idx_student_birthday on hostel.student (birthday) 
+                        comment '' 
+                        algorithm default lock default;'''
+    connector.execute_query(index_creation)
+
     selected_data = {
         'room_students_count': connector.room_students_count(),
         'five_rooms_w_least_avg_ages': connector.five_rooms_w_least_avg_ages(),

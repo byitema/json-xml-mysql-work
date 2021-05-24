@@ -2,32 +2,6 @@ import mysql.connector as mysql
 from configparser import ConfigParser
 
 
-room_students_count = '''select room.room_id, room.room_name, count(student.student_id) as students_count
-               from room
-               join student on room.room_id = student.room_id
-               group by room.room_id;'''
-
-five_rooms_w_least_avg_ages = '''select room.room_id, room.room_name, avg(year(current_timestamp) - year(student.birthday)) as avg_age
-                          from room 
-                          join student on room.room_id = student.room_id
-                          group by room.room_id
-                          order by avg_age
-                          limit 5;'''
-
-five_rooms_w_biggest_age_diffs = '''select room.room_id, room.room_name, max(year(current_timestamp) - year(student.birthday)) - min(year(current_timestamp) - year(student.birthday)) as age_diff
-                            from room 
-                            join student on room.room_id = student.room_id
-                            group by room.room_id
-                            order by age_diff desc
-                            limit 5;'''
-
-rooms_w_different_sexes_students = '''select room.room_id, room.room_name
-                                      from room 
-                                      join student on room.room_id = student.room_id
-                                      group by room.room_id
-                                      having count(distinct student.sex) > 1;'''
-
-
 def read_db_config(filename, section):
     parser = ConfigParser()
     parser.read(filename)
@@ -76,29 +50,62 @@ class DBConnector:
 
         return rows
 
+    def execute_query(self, query: str):
+        with self.connection.cursor() as cursor:
+            cursor.execute(query)
+            self.connection.commit()
+
 
 class HostelDBConnector(DBConnector):
+    create_room_table = '''create table if not exists room (
+                               room_id int,
+                               room_name varchar(255),
+                               primary key (room_id)
+                           );'''
+
+    create_student_table = '''create table if not exists student (
+                                  student_id int,
+                                  first_name varchar(127),
+                                  last_name varchar(127),
+                                  degree varchar (31),
+                                  birthday datetime,
+                                  room_id int,
+                                  sex enum ('M', 'F'),
+                                  primary key (student_id),
+                                  foreign key (room_id)
+                                      references room (room_id)
+                                      on update restrict on delete cascade
+                              );'''
+
+    room_students_count = '''select room.room_id, room.room_name, count(student.student_id) as students_count
+                             from room
+                             join student on room.room_id = student.room_id
+                             group by room.room_id;'''
+
+    five_rooms_w_least_avg_ages = '''select room.room_id, room.room_name, avg(year(current_timestamp) - year(student.birthday)) as avg_age
+                                     from room 
+                                     join student on room.room_id = student.room_id
+                                     group by room.room_id
+                                     order by avg_age
+                                     limit 5;'''
+
+    five_rooms_w_biggest_age_diffs = '''select room.room_id, room.room_name, max(year(current_timestamp) - year(student.birthday)) - min(year(current_timestamp) - year(student.birthday)) as age_diff
+                                        from room 
+                                        join student on room.room_id = student.room_id
+                                        group by room.room_id
+                                        order by age_diff desc
+                                        limit 5;'''
+
+    rooms_w_different_sexes_students = '''select room.room_id, room.room_name
+                                          from room 
+                                          join student on room.room_id = student.room_id
+                                          group by room.room_id
+                                          having count(distinct student.sex) > 1;'''
+
     def create_tables(self):
         with self.connection.cursor() as cursor:
-            cursor.execute('''create table if not exists room (
-                                        room_id int,
-                                        room_name varchar(255),
-                                        primary key (room_id)
-                                    );''')
-
-            cursor.execute('''create table if not exists student (
-                                            student_id int,
-                                            first_name varchar(127),
-                                            last_name varchar(127),
-                                            degree varchar (31),
-                                            birthday datetime,
-                                            room_id int,
-                                            sex enum ('M', 'F'),
-                                            primary key (student_id),
-                                            foreign key (room_id)
-                                                references room (room_id)
-                                                on update restrict on delete cascade
-                                        )''')
+            cursor.execute(self.create_room_table)
+            cursor.execute(self.create_student_table)
 
             self.connection.commit()
 
@@ -137,7 +144,7 @@ class HostelDBConnector(DBConnector):
             self.connection.commit()
 
     def room_students_count(self):
-        rows = self.select_query(room_students_count)
+        rows = self.select_query(self.room_students_count)
 
         res = []
         for row in rows:
@@ -150,7 +157,7 @@ class HostelDBConnector(DBConnector):
         return res
 
     def five_rooms_w_least_avg_ages(self):
-        rows = self.select_query(five_rooms_w_least_avg_ages)
+        rows = self.select_query(self.five_rooms_w_least_avg_ages)
 
         res = []
         for row in rows:
@@ -163,7 +170,7 @@ class HostelDBConnector(DBConnector):
         return res
 
     def five_rooms_w_biggest_age_diffs(self):
-        rows = self.select_query(five_rooms_w_biggest_age_diffs)
+        rows = self.select_query(self.five_rooms_w_biggest_age_diffs)
 
         res = []
         for row in rows:
@@ -176,7 +183,7 @@ class HostelDBConnector(DBConnector):
         return res
 
     def rooms_w_different_sexes_students(self):
-        rows = self.select_query(rooms_w_different_sexes_students)
+        rows = self.select_query(self.rooms_w_different_sexes_students)
 
         res = []
         for row in rows:
