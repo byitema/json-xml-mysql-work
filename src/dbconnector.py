@@ -67,6 +67,15 @@ class DBConnector:
         except Exception as ex:
             raise ex
 
+    def select_query(self, query: str):
+        with self.connection.cursor() as cursor:
+            cursor.execute(query)
+            rows = cursor.fetchall()
+
+            self.connection.commit()
+
+        return rows
+
 
 class HostelDBConnector(DBConnector):
     def create_tables(self):
@@ -126,15 +135,6 @@ class HostelDBConnector(DBConnector):
                 cursor.execute(query, args)
 
             self.connection.commit()
-
-    def select_query(self, query: str):
-        with self.connection.cursor() as cursor:
-            cursor.execute(query)
-            rows = cursor.fetchall()
-
-            self.connection.commit()
-
-        return rows
 
     def room_students_count(self):
         rows = self.select_query(room_students_count)

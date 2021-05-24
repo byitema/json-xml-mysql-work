@@ -1,7 +1,7 @@
 import json
 from argumentparser import ArgumentParser
+from dbconnector import HostelDBConnector
 from filehandler import FileHandler
-from dbconnector import *
 
 
 def json2dict(filename):
@@ -16,17 +16,20 @@ if __name__ == '__main__':
     students_data = json2dict(args['students_file'])
     rooms_data = json2dict(args['rooms_file'])
 
-    # working with database
     connector = HostelDBConnector('configs/config.ini')
     connector.connect()
-    #connector.create_tables()
-    #connector.insert_rooms(rooms_data)
-    #connector.insert_students(students_data)
 
-    print(connector.five_rooms_w_biggest_age_diffs())
+    connector.create_tables()
+    connector.insert_rooms(rooms_data)
+    connector.insert_students(students_data)
 
+    selected_data = {
+        'room_students_count': connector.room_students_count(),
+        'five_rooms_w_least_avg_ages': connector.five_rooms_w_least_avg_ages(),
+        'five_rooms_w_biggest_age_diffs': connector.five_rooms_w_biggest_age_diffs(),
+        'rooms_w_different_sexes_students': connector.rooms_w_different_sexes_students()
+    }
 
-    # end working with database
-
-    # serialized_data = output_format_serializer[args['output_format']].serialize(rooms)
-    # FileHandler.write(serialized_data, './output/rooms' + '.' + args['output_format'])
+    for name, data in selected_data.items():
+        serialized_data = args['output_format_serializer'].serialize(data)
+        FileHandler.write(serialized_data, './output/' + name + '.' + args['output_format'])
