@@ -31,13 +31,17 @@ class ArgumentParser(BaseArgumentParser):
         self.parser.add_argument('--format',
                                  help='output format (XML or JSON)',
                                  type=ArgumentParser.check_output_format)
+        self.parser.add_argument('--config',
+                                 help='path to the database config file',
+                                 type=ArgumentParser.check_path)
 
     def parse_arguments(self):
         args = self.parser.parse_args()
         return {'students_file': args.students,
                 'rooms_file': args.rooms,
                 'output_format': args.format.lower(),
-                'output_format_serializer': self.output_format_serializer[args.format.lower()]}
+                'output_format_serializer': self.output_format_serializer[args.format.lower()],
+                'config_file': args.config}
 
     @staticmethod
     def check_path(path: str):
