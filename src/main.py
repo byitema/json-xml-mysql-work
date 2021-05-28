@@ -19,9 +19,9 @@ if __name__ == '__main__':
     connector = HostelDBConnector(args['config_file'])
     connector.connect()
 
-    #connector.create_tables()
-    #connector.insert_rooms(rooms_data)
-    #connector.insert_students(students_data)
+    connector.create_tables()
+    connector.insert_rooms(rooms_data)
+    connector.insert_students(students_data)
 
     # adding index on birthday
     # - we have queries that use this column
@@ -30,7 +30,7 @@ if __name__ == '__main__':
     index_creation = '''create index idx_student_birthday on hostel.student (birthday) 
                         comment '' 
                         algorithm default lock default;'''
-    #connector.execute_query(index_creation)
+    connector.execute_query(index_creation)
 
     selected_data = {
         'room_students_count': connector.get_room_students_count(),
