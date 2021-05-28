@@ -149,9 +149,7 @@ class HostelDBConnector(DBConnector):
         res = []
         for row in rows:
             row_dict = dict()
-            row_dict['room_id'] = row[0]
-            row_dict['room_name'] = row[1]
-            row_dict['students_count'] = row[2]
+            row_dict['room_id'], row_dict['room_name'], row_dict['students_count'] = row
             res.append(row_dict)
 
         return res
@@ -162,9 +160,8 @@ class HostelDBConnector(DBConnector):
         res = []
         for row in rows:
             row_dict = dict()
-            row_dict['room_id'] = row[0]
-            row_dict['room_name'] = row[1]
-            row_dict['avg_age'] = float(row[2])
+            row_dict['room_id'], row_dict['room_name'], row_dict['avg_age'] = row
+            row_dict['avg_age'] = float(row_dict['avg_age'])
             res.append(row_dict)
 
         return res
@@ -175,9 +172,7 @@ class HostelDBConnector(DBConnector):
         res = []
         for row in rows:
             row_dict = dict()
-            row_dict['room_id'] = row[0]
-            row_dict['room_name'] = row[1]
-            row_dict['age_diff'] = row[2]
+            row_dict['room_id'], row_dict['room_name'], row_dict['age_diff'] = row
             res.append(row_dict)
 
         return res
@@ -188,8 +183,7 @@ class HostelDBConnector(DBConnector):
         res = []
         for row in rows:
             row_dict = dict()
-            row_dict['room_id'] = row[0]
-            row_dict['room_name'] = row[1]
+            row_dict['room_id'], row_dict['room_name'] = row
             res.append(row_dict)
 
         return res
