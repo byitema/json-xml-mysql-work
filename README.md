@@ -30,4 +30,5 @@
 Ожидается отсутсвие использования ORM (т.е. надо использовать SQL)
 
 # Query time comparison
+Добавление индекса не особо повлияло на время выполнения запроса.
 ![Query time](pics/query_time_comparison.png)
