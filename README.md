@@ -30,3 +30,4 @@
 Ожидается отсутсвие использования ORM (т.е. надо использовать SQL)
 
 # Query time comparison
+![Query time](pics/query_time_comparison.png)
