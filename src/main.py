@@ -16,7 +16,7 @@ if __name__ == '__main__':
     students_data = json2dict(args['students_file'])
     rooms_data = json2dict(args['rooms_file'])
 
-    connector = HostelDBConnector('configs/config.ini')
+    connector = HostelDBConnector(args['config_file'])
     connector.connect()
 
     connector.create_tables()
@@ -33,10 +33,10 @@ if __name__ == '__main__':
     connector.execute_query(index_creation)
 
     selected_data = {
-        'room_students_count': connector.room_students_count(),
-        'five_rooms_w_least_avg_ages': connector.five_rooms_w_least_avg_ages(),
-        'five_rooms_w_biggest_age_diffs': connector.five_rooms_w_biggest_age_diffs(),
-        'rooms_w_different_sexes_students': connector.rooms_w_different_sexes_students()
+        'room_students_count': connector.get_room_students_count(),
+        'five_rooms_w_least_avg_ages': connector.get_five_rooms_w_least_avg_ages(),
+        'five_rooms_w_biggest_age_diffs': connector.get_five_rooms_w_biggest_age_diffs(),
+        'rooms_w_different_sexes_students': connector.get_rooms_w_different_sexes_students()
     }
 
     for name, data in selected_data.items():

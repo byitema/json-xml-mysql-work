@@ -143,53 +143,47 @@ class HostelDBConnector(DBConnector):
 
             self.connection.commit()
 
-    def room_students_count(self):
+    def get_room_students_count(self):
         rows = self.select_query(self.room_students_count)
 
         res = []
         for row in rows:
             row_dict = dict()
-            row_dict['room_id'] = row[0]
-            row_dict['room_name'] = row[1]
-            row_dict['students_count'] = row[2]
+            row_dict['room_id'], row_dict['room_name'], row_dict['students_count'] = row
             res.append(row_dict)
 
         return res
 
-    def five_rooms_w_least_avg_ages(self):
+    def get_five_rooms_w_least_avg_ages(self):
         rows = self.select_query(self.five_rooms_w_least_avg_ages)
 
         res = []
         for row in rows:
             row_dict = dict()
-            row_dict['room_id'] = row[0]
-            row_dict['room_name'] = row[1]
-            row_dict['avg_age'] = float(row[2])
+            row_dict['room_id'], row_dict['room_name'], row_dict['avg_age'] = row
+            row_dict['avg_age'] = float(row_dict['avg_age'])
             res.append(row_dict)
 
         return res
 
-    def five_rooms_w_biggest_age_diffs(self):
+    def get_five_rooms_w_biggest_age_diffs(self):
         rows = self.select_query(self.five_rooms_w_biggest_age_diffs)
 
         res = []
         for row in rows:
             row_dict = dict()
-            row_dict['room_id'] = row[0]
-            row_dict['room_name'] = row[1]
-            row_dict['age_diff'] = row[2]
+            row_dict['room_id'], row_dict['room_name'], row_dict['age_diff'] = row
             res.append(row_dict)
 
         return res
 
-    def rooms_w_different_sexes_students(self):
+    def get_rooms_w_different_sexes_students(self):
         rows = self.select_query(self.rooms_w_different_sexes_students)
 
         res = []
         for row in rows:
             row_dict = dict()
-            row_dict['room_id'] = row[0]
-            row_dict['room_name'] = row[1]
+            row_dict['room_id'], row_dict['room_name'] = row
             res.append(row_dict)
 
         return res
